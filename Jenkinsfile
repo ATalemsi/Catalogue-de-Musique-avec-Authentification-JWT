@@ -4,14 +4,13 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Pull the latest code from GitHub (or another Git repository)
-                git branch: 'main', url: 'https://github.com/your-repo/music-catalog-api.git'
+                git branch: 'main', url: 'https://github.com/ATalemsi/Catalogue-de-Musique-avec-Authentification-JWT.git'
             }
         }
 
         stage('Build') {
             steps {
-                // Build the project using Maven
+                // Use Maven to build the project
                 sh './mvnw clean package -DskipTests'
             }
         }
@@ -19,25 +18,25 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 // Build the Docker image
-                sh 'docker build -t music-catalog-api:latest .'
+                sh 'docker build -t app:latest .'
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                // Push the Docker image to DockerHub or another registry
-                withCredentials([string(credentialsId: 'Abdo@2023', variable: 'DOCKER_PASSWORD')]) {
-                    sh 'echo $DOCKER_PASSWORD | docker login -u abdellahtalemsi --password-stdin'
+                // Push the Docker image to DockerHub
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh 'echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin'
                 }
-                sh 'docker tag music-catalog-api:latest abdellahtalemsi/music-catalog-api:latest'
-                sh 'docker push abdellahtalemsi/music-catalog-api:latest'
+                sh 'docker tag app:latest $DOCKER_USERNAME/app:latest'
+                sh 'docker push $DOCKER_USERNAME/app:latest'
             }
         }
 
         stage('Deploy with Docker Compose') {
             steps {
                 // Deploy the application using Docker Compose
-                sh 'docker-compose down'
+                sh 'docker-compose down || true' // Ignore errors if containers are not running
                 sh 'docker-compose up -d'
             }
         }
@@ -46,7 +45,7 @@ pipeline {
     post {
         always {
             echo 'Cleaning up Docker resources...'
-            sh 'docker system prune -f'
+            sh 'docker system prune -f || true' // Ensure it doesn't fail the pipeline
         }
     }
 }
