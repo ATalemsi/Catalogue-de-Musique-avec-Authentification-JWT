@@ -41,11 +41,13 @@ pipeline {
 
         stage('Deploy with Docker Compose') {
             steps {
-                // Deploy the application using Docker Compose
-                sh 'docker-compose down || true' // Ignore errors if containers are not running
-                sh 'docker-compose up -d'
+                script {
+                    // Bring up only app and mongo
+                    sh 'docker-compose up -d app mongo'
+                }
             }
         }
+
     }
 
     post {
