@@ -27,17 +27,16 @@ pipeline {
         }
 
         stage('Push Docker Image') {
-       stage('Push Docker Image') {
-           steps {
-               withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                   sh '''
-                       echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin || exit 1
-                       docker tag app:latest $DOCKER_USERNAME/app:latest
-                       docker push $DOCKER_USERNAME/app:latest
-                   '''
-               }
-           }
-       }
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials-id', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    sh '''
+                        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin || exit 1
+                        docker tag app:latest $DOCKER_USERNAME/app:latest
+                        docker push $DOCKER_USERNAME/app:latest
+                    '''
+                }
+            }
+        }
 
 
         stage('Deploy with Docker Compose') {
