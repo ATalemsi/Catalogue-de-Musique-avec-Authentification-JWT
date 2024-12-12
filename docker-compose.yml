@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/musicdb
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:6.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: jenkins
+    ports:
+      - "8081:8080" # Jenkins UI exposed on port 8081
+      - "50000:50000" # Jenkins agent communication port
+    environment:
+      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+    volumes:
+      - jenkins_home:/var/jenkins_home # Persistent Jenkins data
+      - /var/run/docker.sock:/var/run/docker.sock # Allow Jenkins to interact with Docker
+    user: root # To avoid permission issues when running Docker inside Jenkins
+    depends_on:
+      - app
+      - mongo
+
+volumes:
+  mongodb_data:
+  jenkins_home:
