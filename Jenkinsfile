@@ -10,6 +10,8 @@ pipeline {
 
         stage('Build') {
             steps {
+                // Fix: Ensure `mvnw` has executable permissions
+                sh 'chmod +x ./mvnw'
                 // Use Maven to build the project
                 sh './mvnw clean package -DskipTests'
             }
@@ -17,6 +19,8 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
+                // Ensure Docker is available
+                sh 'docker --version'
                 // Build the Docker image
                 sh 'docker build -t app:latest .'
             }
