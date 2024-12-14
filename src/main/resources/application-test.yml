@@ -1,0 +1,5 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:admin123@mongo:27017/musicdb_test?authSource=admin
+      database: musicdb_test

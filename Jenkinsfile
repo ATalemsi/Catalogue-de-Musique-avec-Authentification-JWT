@@ -43,7 +43,7 @@ pipeline {
             steps {
                 script {
                     // Bring up only app and mongo
-                    sh 'docker-compose up -d app mongo'
+                    sh 'docker-compose up -d '
                 }
             }
         }

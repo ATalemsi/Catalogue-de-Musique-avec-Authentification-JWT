@@ -1,26 +1,39 @@
 version: '3.8'
 
 services:
-  app:
+  spring-app:
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongo:27017/musicdb
+      - SPRING_PROFILES_ACTIVE=dev
+      - MONGO_URI=mongodb://admin:admin123@mongo:27017/musicdb?authSource=admin
     depends_on:
       - mongo
-    container_name: custom-app-name # Renaming the app container
+    container_name: spring-app
 
   mongo:
     image: mongo:6.0
-    container_name: custom-mongo-name # Renaming the mongo container
+    container_name: mongo
     ports:
       - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin123
     volumes:
       - mongodb_data:/data/db
 
+  mongo-express:
+    image: mongo-express:latest
+    container_name: mongo-express
+    ports:
+      - "8082:8081"
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=admin
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=admin123
+      - ME_CONFIG_MONGODB_SERVER=mongo
+
 volumes:
   mongodb_data:
-  jenkins_home:

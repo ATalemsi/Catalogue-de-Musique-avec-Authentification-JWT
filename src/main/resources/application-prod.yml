@@ -1,0 +1,7 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://admin:admin123@mongo:27017/musicdb_prod?authSource=admin
+logging:
+  level:
+    org.springframework.data.mongodb: INFO
